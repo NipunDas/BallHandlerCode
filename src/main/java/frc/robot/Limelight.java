@@ -34,10 +34,10 @@ public class Limelight {
 		y = ty.getDouble(0.0);
 		area = ta.getDouble(0.0);
 
-		SmartDashboard.putNumber("x", x);
-		SmartDashboard.putNumber("y", y);
-		SmartDashboard.putNumber("area", area);
-		SmartDashboard.putBoolean("v", v == 1 ? true : false);
+		//SmartDashboard.putNumber("x", x);
+		//SmartDashboard.putNumber("y", y);
+		//SmartDashboard.putNumber("area", area);
+		//SmartDashboard.putBoolean("v", v == 1 ? true : false);
     }
 
     public static void disable() {

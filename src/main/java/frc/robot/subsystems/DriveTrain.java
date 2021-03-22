@@ -14,16 +14,12 @@ import frc.robot.RobotContainer;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 
-import frc.robot.Ultrasonic;
-
 public class DriveTrain extends SubsystemBase {
 
   private static DriveTrain drive;
   private WPI_TalonSRX leftTalon = new WPI_TalonSRX(Constants.leftDrivePort);
   private WPI_TalonSRX rightTalon = new WPI_TalonSRX(Constants.rightDrivePort);
   private AHRS navx = new AHRS(SPI.Port.kMXP);
-
-  Ultrasonic ultra = new Ultrasonic();
 
   private double kTicksToInches = 0.152 * Math.PI * (1.0/4096.0);
 
@@ -74,7 +70,6 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    tankDrive(RobotContainer.returnLeftJoy().getY() * 0.5, RobotContainer.returnRightJoy().getY() * 0.5);
-    System.out.println(ultra.getDistance());
+    //tankDrive(RobotContainer.returnLeftJoy().getY() * 0.5, RobotContainer.returnRightJoy().getY() * 0.5);
   }
 }

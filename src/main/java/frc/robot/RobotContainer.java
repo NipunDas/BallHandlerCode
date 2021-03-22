@@ -30,8 +30,7 @@ public class RobotContainer {
   //joysticks and joystick buttons
   public static Joystick leftJoy = new Joystick(Constants.leftJoy);
   public static Joystick rightJoy = new Joystick(Constants.rightJoy);
-  public static Joystick mechJoy = new Joystick(Constants.mechJoy);
-  //public static JoystickButton shooterPlus, shooterMinus;
+  public static JoystickButton hood1, hood2, hood3, hood4;
 
   private static Limelight limelight = new Limelight();
   private static Ultrasonic ultrasonic = new Ultrasonic();
@@ -49,7 +48,14 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    //shooterPlus = new JoystickButton(mechJoy, 1); 
+    hood1 = new JoystickButton(leftJoy, Constants.angle1Button);
+    hood2 = new JoystickButton(leftJoy, Constants.angle2Button);
+    hood3 = new JoystickButton(leftJoy, Constants.angle2Button);
+    hood4 = new JoystickButton(leftJoy, Constants.angle2Button);
+    hood1.whenPressed(new SetHood(BallHandler.angle1));
+    hood2.whenPressed(new SetHood(BallHandler.angle2));
+    hood3.whenPressed(new SetHood(BallHandler.angle3));
+    hood4.whenPressed(new SetHood(BallHandler.angle4));
   }
 
   public static Joystick returnLeftJoy() {
@@ -58,10 +64,6 @@ public class RobotContainer {
 
   public static Joystick returnRightJoy() {
     return rightJoy;
-  }
-
-  public static Joystick returnMechJoy() {
-    return mechJoy;
   }
 
   public static Limelight getLimelight() {

@@ -26,4 +26,9 @@ public final class Constants {
     public static int leftJoy = 0;
     public static int rightJoy = 1;
     public static int mechJoy = 2;
+    public static int angle1Button = 11;
+    public static int angle2Button = 12;
+    public static int angle3Button = 13;
+    public static int angle4Button = 14;
+    public static int intakeToggle = 11;
 }

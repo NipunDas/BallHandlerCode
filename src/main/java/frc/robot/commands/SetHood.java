@@ -6,47 +6,43 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import edu.wpi.first.wpilibj.Timer;
+public class SetHood extends CommandBase {
 
-public class TimedTurn extends CommandBase {
-
-  private boolean turnRight;
-  private double turnTime;
-  private double startTime;
-  /** Creates a new TimedTurn. */
-  public TimedTurn(boolean right, double time) {
+  private double targetAngle;
+  
+  /** Creates a new SetHood. */
+  public SetHood(double angle) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.returnDrive().getInstance(), RobotContainer.returnBallHandler().getInstance());
-    turnTime = time;
-    turnRight = right;
+    addRequirements(RobotContainer.returnBallHandler().getInstance());
+    targetAngle = angle;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    startTime = Timer.getFPGATimestamp();
+    RobotContainer.returnBallHandler().setHoodBrake(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (turnRight) {
-      RobotContainer.returnDrive().tankDrive(0.6, -0.6);
+    if (targetAngle > RobotContainer.returnBallHandler().getHoodPosition()) {
+      RobotContainer.returnBallHandler().setHoodPower(0.1);
     } else {
-      RobotContainer.returnDrive().tankDrive(-0.6, 0.6);
+      RobotContainer.returnBallHandler().setHoodPower(-0.1);
     }
-    RobotContainer.returnBallHandler().spinIntake(0.3);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.returnDrive().tankDrive(0, 0);
+    RobotContainer.returnBallHandler().setHoodPower(0);
+    RobotContainer.returnBallHandler().setHoodBrake(true);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Timer.getFPGATimestamp() - startTime) > turnTime;
+    return Math.abs(targetAngle - RobotContainer.returnBallHandler().getHoodPosition()) < 2;
   }
 }
