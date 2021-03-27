@@ -31,4 +31,5 @@ public final class Constants {
     public static int angle3Button = 13;
     public static int angle4Button = 14;
     public static int intakeToggle = 11;
+    public static int feederButton = 12;
 }

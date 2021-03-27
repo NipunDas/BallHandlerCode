@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** Add your docs here. */
 public class Ultrasonic {
@@ -33,7 +32,6 @@ public class Ultrasonic {
             //values of the lowbyte greater than 127 overflow to -128 or greater, so negative values of lowbyte need to be adjusted
             if (lowByte < 0) lowByte += 256;
             double distance = ((256 * highByte) + lowByte) / 100.0; //shifting highByte 8 bits to the left, adding lowbyte, converting to m
-            //SmartDashboard.putNumber("Distance: ", distance); //putting data on smart dashboard
             ultrasonic.write(224, 81); //doing another reading
             ultrasonicTimer.reset(); //resetting the timer
             return distance;

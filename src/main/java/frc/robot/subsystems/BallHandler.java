@@ -20,21 +20,21 @@ public class BallHandler extends SubsystemBase {
 
   public static BallHandler ballHandler;
   private WPI_TalonSRX intake = new WPI_TalonSRX(Constants.intakePort);
-  private WPI_TalonSRX feeder = new WPI_TalonSRX(Constants.feederPort);
-  //private WPI_TalonSRX feeder = new WPI_TalonSRX(3);
-  private WPI_TalonSRX flywheel = new WPI_TalonSRX(Constants.flywheelPort);
-  //private WPI_TalonSRX flywheel = new WPI_TalonSRX(2);
+  //private WPI_TalonSRX feeder = new WPI_TalonSRX(Constants.feederPort);
+  private WPI_TalonSRX feeder = new WPI_TalonSRX(3);
+  //private WPI_TalonSRX flywheel = new WPI_TalonSRX(Constants.flywheelPort);
+  private WPI_TalonSRX flywheel = new WPI_TalonSRX(2);
   private WPI_TalonSRX hood = new WPI_TalonSRX(Constants.hoodPort);
 
   private double kTicksInRotation = 4096.0;
-  PIDController flywheelPID = new PIDController(0.15, 0.3, 0);
+  PIDController flywheelPID = new PIDController(0.2, 0.4, 0);
   private double feederThreshold = 0.1; //threshold for determining when to spin feeder
 
   //4 hood angles
-  public static int angle1 = 40, angle2 = 50, angle3 = 60, angle4 = 70;
+  public static int[] hoodAngles = {40, 50, 60, 70};
 
   //shooter speed (tangential speed in m/s)
-  private double shooterSpeed = 3;
+  private double shooterSpeed = 2;
 
   //intake power (stored as variable so it can be toggled)
   private double intakePower = 0.3;
@@ -67,7 +67,7 @@ public class BallHandler extends SubsystemBase {
   }
 
   public double getFlyWheelSpeed() {
-    return -1 * flywheel.getSensorCollection().getPulseWidthVelocity() * 10 * (1.0 / kTicksInRotation) * (2 * Math.PI * 5.08);
+    return -1 * flywheel.getSensorCollection().getPulseWidthVelocity() * 10 * (1.0 / kTicksInRotation) * (2 * Math.PI * 0.0508);
   }
 
   public double getHoodPosition() {
@@ -97,10 +97,11 @@ public class BallHandler extends SubsystemBase {
     //flywheel constant velocity code
     double flywheelPower = flywheelPID.calculate(getFlyWheelSpeed(), shooterSpeed);
     flywheel.set(ControlMode.PercentOutput, flywheelPower);
-    SmartDashboard.putNumber("Flywheel Speed in m/s: ", getFlyWheelSpeed());
+    SmartDashboard.putNumber("Flywheel Speed", getFlyWheelSpeed());
+    SmartDashboard.putNumber("Flywheel Power", flywheelPower);
 
-    //controlling feeder based on flywheel velocity error
-    if (Math.abs(flywheelPID.getPositionError()) < feederThreshold) {
+    //controlling feeder based on flywheel velocity error (or joystick button)
+    if (Math.abs(flywheelPID.getPositionError()) < feederThreshold || RobotContainer.returnRightJoy().getRawButton(Constants.feederButton)) {
       feeder.set(ControlMode.PercentOutput, 0.2);
     } else {
       feeder.set(ControlMode.PercentOutput, 0);

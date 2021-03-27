@@ -70,6 +70,6 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    //tankDrive(RobotContainer.returnLeftJoy().getY() * 0.5, RobotContainer.returnRightJoy().getY() * 0.5);
+    tankDrive(RobotContainer.returnLeftJoy().getY() * 0.5, RobotContainer.returnRightJoy().getY() * 0.5);
   }
 }
