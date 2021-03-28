@@ -52,10 +52,10 @@ public class RobotContainer {
     hood2 = new JoystickButton(leftJoy, Constants.angle2Button);
     hood3 = new JoystickButton(leftJoy, Constants.angle2Button);
     hood4 = new JoystickButton(leftJoy, Constants.angle2Button);
-    hood1.whenPressed(new SetHood(BallHandler.hoodAngles[1]));
-    hood2.whenPressed(new SetHood(BallHandler.hoodAngles[2]));
-    hood3.whenPressed(new SetHood(BallHandler.hoodAngles[3]));
-    hood4.whenPressed(new SetHood(BallHandler.hoodAngles[4]));
+    hood1.whenPressed(new SetHood(BallHandler.hoodAngles[0]));
+    hood2.whenPressed(new SetHood(BallHandler.hoodAngles[1]));
+    hood3.whenPressed(new SetHood(BallHandler.hoodAngles[2]));
+    hood4.whenPressed(new SetHood(BallHandler.hoodAngles[3]));
   }
 
   public static Joystick returnLeftJoy() {

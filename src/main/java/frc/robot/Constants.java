@@ -17,10 +17,10 @@ public final class Constants {
     //talons
     public static int leftDrivePort = 2;
     public static int rightDrivePort = 3;
-    public static int intakePort = 4;
-    public static int feederPort = 5;
-    public static int flywheelPort = 6;
-    public static int hoodPort = 7;
+    public static int intakePort = 10;
+    public static int feederPort = 7;
+    public static int flywheelPort = 14;
+    public static int hoodPort = 9;
     
     //joystick and joystick buttons
     public static int leftJoy = 0;

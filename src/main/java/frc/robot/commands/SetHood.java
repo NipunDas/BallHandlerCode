@@ -27,9 +27,9 @@ public class SetHood extends CommandBase {
   @Override
   public void execute() {
     if (targetAngle > RobotContainer.returnBallHandler().getHoodPosition()) {
-      RobotContainer.returnBallHandler().setHoodPower(0.1);
+      RobotContainer.returnBallHandler().setHoodPower(0.2);
     } else {
-      RobotContainer.returnBallHandler().setHoodPower(-0.1);
+      RobotContainer.returnBallHandler().setHoodPower(-0.2);
     }
   }
 
@@ -43,6 +43,6 @@ public class SetHood extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(targetAngle - RobotContainer.returnBallHandler().getHoodPosition()) < 2;
+    return Math.abs(targetAngle - RobotContainer.returnBallHandler().getHoodPosition()) < 1;
   }
 }
