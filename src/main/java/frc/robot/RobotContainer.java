@@ -31,6 +31,7 @@ public class RobotContainer {
   public static Joystick leftJoy = new Joystick(Constants.leftJoy);
   public static Joystick rightJoy = new Joystick(Constants.rightJoy);
   public static JoystickButton hood1, hood2, hood3, hood4;
+  public static JoystickButton alignRobot;
 
   private static Limelight limelight = new Limelight();
   private static Ultrasonic ultrasonic = new Ultrasonic();
@@ -56,6 +57,9 @@ public class RobotContainer {
     hood2.whenPressed(new SetHood(BallHandler.hoodAngles[1]));
     hood3.whenPressed(new SetHood(BallHandler.hoodAngles[2]));
     hood4.whenPressed(new SetHood(BallHandler.hoodAngles[3]));
+
+    alignRobot = new JoystickButton(rightJoy, Constants.alignButton);
+    alignRobot.whenPressed(new AlignBall());
   }
 
   public static Joystick returnLeftJoy() {

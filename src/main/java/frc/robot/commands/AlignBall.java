@@ -27,7 +27,7 @@ public class AlignBall extends CommandBase {
     } else {
       RobotContainer.returnDrive().tankDrive(0.3, -0.3);
     }
-    RobotContainer.returnBallHandler().spinIntake(0.3);
+    RobotContainer.returnBallHandler().spinIntake(0.45);
   }
 
   // Called once the command ends or is interrupted.

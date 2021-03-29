@@ -17,19 +17,21 @@ import frc.robot.RobotContainer;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 
 public class BallHandler extends SubsystemBase {
 
   public static BallHandler ballHandler;
   private WPI_TalonSRX intake = new WPI_TalonSRX(Constants.intakePort);
   private WPI_TalonSRX feeder = new WPI_TalonSRX(Constants.feederPort);
-  //private WPI_TalonSRX feeder = new WPI_TalonSRX(3);
   private WPI_TalonSRX flywheel = new WPI_TalonSRX(Constants.flywheelPort);
-  //private WPI_TalonSRX flywheel = new WPI_TalonSRX(2);
   private WPI_TalonSRX hood = new WPI_TalonSRX(Constants.hoodPort);
 
+  private double kP = 0.15, kI = 0, kD = 0, kS = 0, kV = 0;
+
   private double kTicksInRotation = 4096.0;
-  PIDController flywheelPID = new PIDController(0.1, 0.3, 0);
+  PIDController flywheelPID = new PIDController(kP, kI, kD);
+  SimpleMotorFeedforward flywheelFeedforward = new SimpleMotorFeedforward(kS, kV);
   private double feederThreshold = 0.1; //threshold for determining when to spin feeder
 
   //4 hood angles
@@ -96,16 +98,17 @@ public class BallHandler extends SubsystemBase {
       intakePower *= -1;
     }
     spinIntake(intakePower);
+    SmartDashboard.putNumber("Intake Current", intake.getSupplyCurrent());
 
     //flywheel constant velocity code
-    double flywheelPower = flywheelPID.calculate(getFlyWheelSpeed(), shooterSpeed);
+    double feedForwardPower = flywheelFeedforward.calculate(shooterSpeed);  
+    double flywheelPower = flywheelPID.calculate(getFlyWheelSpeed(), shooterSpeed) + feedForwardPower;
     flywheel.set(ControlMode.PercentOutput, flywheelPower);
     SmartDashboard.putNumber("Flywheel Speed", getFlyWheelSpeed());
-    SmartDashboard.putNumber("Flywheel Ticks", -1 * flywheel.getSensorCollection().getPulseWidthVelocity());
     SmartDashboard.putNumber("Flywheel Power", flywheelPower);
 
     //controlling feeder based on flywheel velocity error (or joystick button)
-    if (Math.abs(flywheelPID.getPositionError()) < feederThreshold || RobotContainer.returnRightJoy().getRawButton(Constants.feederButton)) {
+    if (Math.abs(flywheelPID.getPositionError()) < feederThreshold && RobotContainer.returnRightJoy().getRawButton(Constants.feederButton)) {
       feeder.set(ControlMode.PercentOutput, 0.3);
     } else {
       feeder.set(ControlMode.PercentOutput, 0);
@@ -116,12 +119,15 @@ public class BallHandler extends SubsystemBase {
 
     //hood test code
     setHoodBrake(false);
-    if (RobotContainer.returnRightJoy().getRawButton(5)) {
+    if (RobotContainer.returnRightJoy().getRawButton(8)) {
+      setHoodBrake(false);
       setHoodPower(0.2);
-    } else if (RobotContainer.returnRightJoy().getRawButton(6)) {
+    } else if (RobotContainer.returnRightJoy().getRawButton(9)) {
+      setHoodBrake(false);
       setHoodPower(-0.2);
     } else {
       setHoodPower(0);
+      setHoodBrake(true);
     }
 
     //ultrasonic data put on smart dashboard

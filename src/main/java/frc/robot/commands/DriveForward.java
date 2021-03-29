@@ -43,8 +43,7 @@ public class DriveForward extends CommandBase {
     errorSum += (error * dt);
     power = (error*kP) + (errorSum*kI) + (derivative*kD);
     RobotContainer.returnDrive().tankDrive(power, power);
-    //System.out.println("Distance: " + RobotContainer.returnDrive().getEncoderDistance());
-    RobotContainer.returnBallHandler().spinIntake(0.3);
+    RobotContainer.returnBallHandler().spinIntake(0.45);
   }
 
   // Called once the command ends or is interrupted.

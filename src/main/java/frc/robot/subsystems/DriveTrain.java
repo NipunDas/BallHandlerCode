@@ -19,6 +19,8 @@ public class DriveTrain extends SubsystemBase {
   private static DriveTrain drive;
   private WPI_TalonSRX leftTalon = new WPI_TalonSRX(Constants.leftDrivePort);
   private WPI_TalonSRX rightTalon = new WPI_TalonSRX(Constants.rightDrivePort);
+  private WPI_TalonSRX leftSlave = new WPI_TalonSRX(Constants.leftSlavePort);
+  private WPI_TalonSRX rightSlave = new WPI_TalonSRX(Constants.rightSlavePort);
   private AHRS navx = new AHRS(SPI.Port.kMXP);
 
   private double kTicksToInches = 0.152 * Math.PI * (1.0/4096.0);
