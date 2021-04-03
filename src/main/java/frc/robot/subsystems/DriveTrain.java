@@ -36,6 +36,12 @@ public class DriveTrain extends SubsystemBase {
     rightTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
     resetEncoders();
 
+    //configuring slave talons
+    leftSlave.configFactoryDefault();
+    leftSlave.setInverted(false);
+    rightSlave.configFactoryDefault();
+    rightSlave.setInverted(true);
+
     //resetting the gyro
     navx.reset();
   }
@@ -50,6 +56,8 @@ public class DriveTrain extends SubsystemBase {
   public void tankDrive(double leftPow, double rightPow) {
     leftTalon.set(ControlMode.PercentOutput, leftPow);
     rightTalon.set(ControlMode.PercentOutput, rightPow);
+    leftSlave.follow(leftTalon);
+    rightSlave.follow(rightTalon);
   }
 
   public void resetEncoders() {

@@ -53,10 +53,10 @@ public class RobotContainer {
     hood2 = new JoystickButton(leftJoy, Constants.angle2Button);
     hood3 = new JoystickButton(leftJoy, Constants.angle2Button);
     hood4 = new JoystickButton(leftJoy, Constants.angle2Button);
-    hood1.whenPressed(new SetHood(BallHandler.hoodAngles[0]));
-    hood2.whenPressed(new SetHood(BallHandler.hoodAngles[1]));
-    hood3.whenPressed(new SetHood(BallHandler.hoodAngles[2]));
-    hood4.whenPressed(new SetHood(BallHandler.hoodAngles[3]));
+    hood1.whenHeld(new ShootBall(BallHandler.hoodAngles[0]));
+    hood2.whenHeld(new ShootBall(BallHandler.hoodAngles[1]));
+    hood3.whenHeld(new ShootBall(BallHandler.hoodAngles[2]));
+    hood4.whenHeld(new ShootBall(BallHandler.hoodAngles[3]));
 
     alignRobot = new JoystickButton(rightJoy, Constants.alignButton);
     alignRobot.whenPressed(new AlignBall());

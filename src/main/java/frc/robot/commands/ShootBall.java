@@ -6,12 +6,12 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-public class SetHood extends CommandBase {
+public class ShootBall extends CommandBase {
 
   private double targetAngle;
   
-  /** Creates a new SetHood. */
-  public SetHood(double angle) {
+  /** Creates a new ShootBall. */
+  public ShootBall(double angle) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.returnBallHandler().getInstance());
     targetAngle = angle;
@@ -26,10 +26,15 @@ public class SetHood extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (targetAngle > RobotContainer.returnBallHandler().getHoodPosition()) {
+    double error = targetAngle - RobotContainer.returnBallHandler().getHoodPosition();
+    if (error > 1) {
+      RobotContainer.returnBallHandler().setHoodPower(-0.2);
+    } else if (error < -1){
       RobotContainer.returnBallHandler().setHoodPower(0.2);
     } else {
-      RobotContainer.returnBallHandler().setHoodPower(-0.2);
+      if (RobotContainer.returnBallHandler().flyWheelSpeedCorrect()) {
+        RobotContainer.returnBallHandler().spinFeeder(0.3);
+      }
     }
   }
 
@@ -43,6 +48,6 @@ public class SetHood extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(targetAngle - RobotContainer.returnBallHandler().getHoodPosition()) < 1;
+    return false;
   }
 }

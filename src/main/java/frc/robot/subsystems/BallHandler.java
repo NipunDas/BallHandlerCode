@@ -75,6 +75,10 @@ public class BallHandler extends SubsystemBase {
     return -1 * flywheel.getSensorCollection().getPulseWidthVelocity() * 10 * (1.0 / kTicksInRotation) * (2 * Math.PI * 0.0508);
   }
 
+  public boolean flyWheelSpeedCorrect() {
+    return Math.abs(flywheelPID.getPositionError()) < feederThreshold;
+  }
+
   public double getHoodPosition() {
     return hood.getSelectedSensorPosition(0) * (1.0 / kTicksInRotation) * (16.0/50.0) * 360.0;
   }
@@ -90,6 +94,10 @@ public class BallHandler extends SubsystemBase {
   public void setHoodPower(double pow) {
     hood.set(ControlMode.PercentOutput, -1 * pow);
   }
+
+  public void spinFeeder(double pow) {
+    feeder.set(ControlMode.PercentOutput, pow);
+  }
  
   @Override
   public void periodic() {
@@ -97,22 +105,15 @@ public class BallHandler extends SubsystemBase {
     if (RobotContainer.returnRightJoy().getRawButtonPressed(Constants.intakeToggle)) {
       intakePower *= -1;
     }
-    spinIntake(intakePower);
+    //spinIntake(intakePower);
     SmartDashboard.putNumber("Intake Current", intake.getSupplyCurrent());
 
     //flywheel constant velocity code
     double feedForwardPower = flywheelFeedforward.calculate(shooterSpeed);  
     double flywheelPower = flywheelPID.calculate(getFlyWheelSpeed(), shooterSpeed) + feedForwardPower;
-    flywheel.set(ControlMode.PercentOutput, flywheelPower);
+    //flywheel.set(ControlMode.PercentOutput, flywheelPower);
     SmartDashboard.putNumber("Flywheel Speed", getFlyWheelSpeed());
     SmartDashboard.putNumber("Flywheel Power", flywheelPower);
-
-    //controlling feeder based on flywheel velocity error (or joystick button)
-    if (Math.abs(flywheelPID.getPositionError()) < feederThreshold && RobotContainer.returnRightJoy().getRawButton(Constants.feederButton)) {
-      feeder.set(ControlMode.PercentOutput, 0.3);
-    } else {
-      feeder.set(ControlMode.PercentOutput, 0);
-    }
 
     //hood data put on smart dashboard
     SmartDashboard.putNumber("Hood Position: ", hood.getSelectedSensorPosition(0));
@@ -130,9 +131,9 @@ public class BallHandler extends SubsystemBase {
       setHoodBrake(true);
     }
 
-    //ultrasonic data put on smart dashboard
+    //ultrasonic data put on smart dashboard (adding 0.63 to get distance from back of shooter to target)
     if (RobotContainer.getUltrasonic().canRead()) {
-      SmartDashboard.putNumber("Ultrasonic Distance: ", RobotContainer.getUltrasonic().getDistance());
+      SmartDashboard.putNumber("Ultrasonic Distance: ", RobotContainer.getUltrasonic().getDistance() + 0.63);
     }
   }
 }
