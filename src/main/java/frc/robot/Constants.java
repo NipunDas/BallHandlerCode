@@ -27,10 +27,9 @@ public final class Constants {
     //joystick and joystick buttons
     public static int leftJoy = 0;
     public static int rightJoy = 1;
-    public static int angle1Button = 11;
-    public static int angle2Button = 12;
-    public static int angle3Button = 13;
-    public static int angle4Button = 14;
+    public static int angle1Button = 8;
+    public static int angle2Button = 9;
+    public static int angle3Button = 10;
     public static int intakeToggle = 6;
     public static int alignButton = 1;
 }

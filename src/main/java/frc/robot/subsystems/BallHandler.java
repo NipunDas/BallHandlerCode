@@ -27,21 +27,25 @@ public class BallHandler extends SubsystemBase {
   private WPI_TalonSRX flywheel = new WPI_TalonSRX(Constants.flywheelPort);
   private WPI_TalonSRX hood = new WPI_TalonSRX(Constants.hoodPort);
 
-  private double kP = 0.15, kI = 0, kD = 0, kS = 0, kV = 0;
+  //kS = 0.486, kV = 0.367, kA = 0.0904
+  private double kP = 0.1, kI = 0, kD = 0, kS = 0.485, kV = 0.34, kA = 0.0904;
 
   private double kTicksInRotation = 4096.0;
   PIDController flywheelPID = new PIDController(kP, kI, kD);
-  SimpleMotorFeedforward flywheelFeedforward = new SimpleMotorFeedforward(kS, kV);
+  SimpleMotorFeedforward flywheelFeedforward = new SimpleMotorFeedforward(kS, kV, kA);
   private double feederThreshold = 0.1; //threshold for determining when to spin feeder
 
   //4 hood angles
-  public static double[] hoodAngles = {40, 50, 60, 70};
+  public static double[] hoodAngles = {59, 47, 52};
 
   //shooter speed (tangential speed in m/s)
   private double shooterSpeed = 25;
 
   //intake power (stored as variable so it can be toggled)
   private double intakePower = 0.45;
+
+  //checking if shooter flywheel needs to be set to full power
+  private boolean flywheelFullPower = false;
 
   /** Creates a new BallHandler. */
   public BallHandler() {
@@ -57,7 +61,6 @@ public class BallHandler extends SubsystemBase {
     hood.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
     hood.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
     hood.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
-    hood.setSelectedSensorPosition(0, 0, 10);
   }
 
   public BallHandler getInstance() {
@@ -80,7 +83,7 @@ public class BallHandler extends SubsystemBase {
   }
 
   public double getHoodPosition() {
-    return hood.getSelectedSensorPosition(0) * (1.0 / kTicksInRotation) * (16.0/50.0) * 360.0;
+    return 90 + (hood.getSelectedSensorPosition(0) * (1.0 / kTicksInRotation) * (16.0/50.0) * 360.0);
   }
 
   public void setHoodBrake(boolean brake) {
@@ -98,6 +101,14 @@ public class BallHandler extends SubsystemBase {
   public void spinFeeder(double pow) {
     feeder.set(ControlMode.PercentOutput, pow);
   }
+
+  public void setFullPower(boolean fullPower) {
+    flywheelFullPower = fullPower;
+  }
+
+  public void setFlywheelPower() {
+    flywheel.set(ControlMode.PercentOutput, 1);
+  }
  
   @Override
   public void periodic() {
@@ -110,16 +121,22 @@ public class BallHandler extends SubsystemBase {
 
     //flywheel constant velocity code
     double feedForwardPower = flywheelFeedforward.calculate(shooterSpeed);  
-    double flywheelPower = flywheelPID.calculate(getFlyWheelSpeed(), shooterSpeed) + feedForwardPower;
-    //flywheel.set(ControlMode.PercentOutput, flywheelPower);
+    double flywheelPower = feedForwardPower;
+    if (Math.abs(flywheelPID.getPositionError()) < 1) {
+      flywheelPower += flywheelPID.calculate(getFlyWheelSpeed(), shooterSpeed);
+    }
+    if (flywheelFullPower) {
+      flywheel.set(ControlMode.PercentOutput, 1);
+    } else {
+      flywheel.set(ControlMode.PercentOutput, flywheelPower/12.0);
+    }
     SmartDashboard.putNumber("Flywheel Speed", getFlyWheelSpeed());
-    SmartDashboard.putNumber("Flywheel Power", flywheelPower);
+    SmartDashboard.putNumber("Flywheel Power", flywheelPower/12.0);
 
     //hood data put on smart dashboard
-    SmartDashboard.putNumber("Hood Position: ", hood.getSelectedSensorPosition(0));
+    SmartDashboard.putNumber("Hood Position: ", getHoodPosition());
 
     //hood test code
-    setHoodBrake(false);
     if (RobotContainer.returnRightJoy().getRawButton(8)) {
       setHoodBrake(false);
       setHoodPower(0.2);
@@ -129,6 +146,16 @@ public class BallHandler extends SubsystemBase {
     } else {
       setHoodPower(0);
       setHoodBrake(true);
+    }
+
+    if (RobotContainer.returnRightJoy().getRawButton(11)) {
+      spinIntake(intakePower);
+    } else {
+      spinIntake(0);
+    }
+
+    if (hood.isFwdLimitSwitchClosed() == 0) {
+      hood.setSelectedSensorPosition(0, 0, 10);
     }
 
     //ultrasonic data put on smart dashboard (adding 0.63 to get distance from back of shooter to target)

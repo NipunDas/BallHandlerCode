@@ -30,7 +30,7 @@ public class RobotContainer {
   //joysticks and joystick buttons
   public static Joystick leftJoy = new Joystick(Constants.leftJoy);
   public static Joystick rightJoy = new Joystick(Constants.rightJoy);
-  public static JoystickButton hood1, hood2, hood3, hood4;
+  public static JoystickButton hood1, hood2, hood3;
   public static JoystickButton alignRobot;
 
   private static Limelight limelight = new Limelight();
@@ -51,12 +51,10 @@ public class RobotContainer {
   private void configureButtonBindings() {
     hood1 = new JoystickButton(leftJoy, Constants.angle1Button);
     hood2 = new JoystickButton(leftJoy, Constants.angle2Button);
-    hood3 = new JoystickButton(leftJoy, Constants.angle2Button);
-    hood4 = new JoystickButton(leftJoy, Constants.angle2Button);
-    hood1.whenHeld(new ShootBall(BallHandler.hoodAngles[0]));
-    hood2.whenHeld(new ShootBall(BallHandler.hoodAngles[1]));
-    hood3.whenHeld(new ShootBall(BallHandler.hoodAngles[2]));
-    hood4.whenHeld(new ShootBall(BallHandler.hoodAngles[3]));
+    hood3 = new JoystickButton(leftJoy, Constants.angle3Button);
+    hood1.toggleWhenPressed(new ShootBall(BallHandler.hoodAngles[0], false));
+    hood2.toggleWhenPressed(new ShootBall(BallHandler.hoodAngles[1], true));
+    hood3.toggleWhenPressed(new ShootBall(BallHandler.hoodAngles[2], true));
 
     alignRobot = new JoystickButton(rightJoy, Constants.alignButton);
     alignRobot.whenPressed(new AlignBall());

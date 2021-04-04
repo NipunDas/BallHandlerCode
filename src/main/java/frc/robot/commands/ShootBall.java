@@ -9,31 +9,51 @@ import frc.robot.RobotContainer;
 public class ShootBall extends CommandBase {
 
   private double targetAngle;
+  private boolean fullPower;
   
   /** Creates a new ShootBall. */
-  public ShootBall(double angle) {
+  public ShootBall(double angle, boolean fullPower) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.returnBallHandler().getInstance());
     targetAngle = angle;
+    this.fullPower = fullPower;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     RobotContainer.returnBallHandler().setHoodBrake(false);
+    RobotContainer.returnBallHandler().setFullPower(fullPower);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     double error = targetAngle - RobotContainer.returnBallHandler().getHoodPosition();
-    if (error > 1) {
-      RobotContainer.returnBallHandler().setHoodPower(-0.2);
-    } else if (error < -1){
-      RobotContainer.returnBallHandler().setHoodPower(0.2);
+    if (error > 0.8) {
+      RobotContainer.returnBallHandler().setHoodBrake(false);
+      RobotContainer.returnBallHandler().setHoodPower(-0.1);
+      RobotContainer.returnBallHandler().spinFeeder(0);
+    } else if (error < -0.8){
+      RobotContainer.returnBallHandler().setHoodBrake(false);
+      RobotContainer.returnBallHandler().setHoodPower(0.1);
+      RobotContainer.returnBallHandler().spinFeeder(0);
     } else {
-      if (RobotContainer.returnBallHandler().flyWheelSpeedCorrect()) {
-        RobotContainer.returnBallHandler().spinFeeder(0.3);
+      RobotContainer.returnBallHandler().setHoodBrake(true);
+      RobotContainer.returnBallHandler().setHoodPower(0);
+      if (!fullPower) {
+        if (Math.abs(24.5 - RobotContainer.returnBallHandler().getFlyWheelSpeed()) < 1.5) {
+          RobotContainer.returnBallHandler().spinFeeder(0.3);
+        } else {
+          RobotContainer.returnBallHandler().spinFeeder(0);
+        }
+      } else {
+        RobotContainer.returnBallHandler().setFlywheelPower();
+        if (RobotContainer.returnRightJoy().getRawButton(10)) {
+          RobotContainer.returnBallHandler().spinFeeder(0.3);
+        } else {
+          RobotContainer.returnBallHandler().spinFeeder(0);
+        }
       }
     }
   }
@@ -42,6 +62,7 @@ public class ShootBall extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     RobotContainer.returnBallHandler().setHoodPower(0);
+    RobotContainer.returnBallHandler().spinFeeder(0);
     RobotContainer.returnBallHandler().setHoodBrake(true);
   }
 
